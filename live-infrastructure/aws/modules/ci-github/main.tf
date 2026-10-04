@@ -14,9 +14,13 @@ locals {
   ecr_arn_pattern = "arn:aws:ecr:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:repository/${var.repository_prefix}*"
 }
 
-# Reglages appliques par ECR a tout depot <prefixe>* cree au premier push
+# Reglages appliques par ECR a tout depot cree au premier push.
+# "prefix" est un namespace ECR (segment avant "/"), pas un debut de nom :
+# "formation-ba-" est invalide et "formation-ba" ne couvrirait que formation-ba/...
+# ROOT = tout depot cree au push ; en pratique uniquement <prefixe>*, car
+# seul le role CI ci-dessous a ecr:CreateRepository, et seulement sur <prefixe>*.
 resource "aws_ecr_repository_creation_template" "ci" {
-  prefix               = var.repository_prefix
+  prefix               = "ROOT"
   applied_for          = ["CREATE_ON_PUSH"]
   description          = "Depots crees au premier push par la CI GitHub"
   image_tag_mutability = "IMMUTABLE" # un tag (= sha du commit) ne change jamais d'image

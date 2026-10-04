@@ -1,5 +1,6 @@
 # CI GitHub Actions -> ECR, sans secret et sans liste figee de projets :
-#   1. GitHub signe un jeton OIDC pour le job (sub = repo:<org>/<depot>:ref:refs/heads/<branche>)
+#   1. GitHub signe un jeton OIDC pour le job
+#      (sub = repo:<org>@<id org>/<depot>@<id depot>:ref:refs/heads/<branche>)
 #   2. AWS STS l'echange contre les credentials temporaires d'UN role commun
 #   3. Le role pousse dans les depots ECR <prefixe>* ; un depot qui n'existe pas
 #      encore est cree par ECR au premier push (modele CREATE_ON_PUSH ci-dessous) :
@@ -58,11 +59,13 @@ data "aws_iam_policy_document" "assume" {
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
-    # Tout depot <org>/<prefixe>*, uniquement depuis sa branche principale
+    # Tout depot <org>/<prefixe>*, uniquement depuis sa branche principale.
+    # L'ID de l'organisation est fige : une autre organisation recreee sous le
+    # meme nom n'a pas le meme ID. Le * couvre "<depot>@<id depot>".
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.github_org}/${var.repository_prefix}*:ref:refs/heads/${var.branch}"]
+      values   = ["repo:${var.github_org}@${var.github_org_id}/${var.repository_prefix}*:ref:refs/heads/${var.branch}"]
     }
   }
 }

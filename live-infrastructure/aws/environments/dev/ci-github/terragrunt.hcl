@@ -10,5 +10,6 @@ terraform {
 # pour le compte dev (205493924920).
 inputs = {
   github_org        = "mchekini-check-consulting"
+  github_org_id     = "115934988"
   repository_prefix = "formation-ba-"
 }

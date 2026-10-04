@@ -13,6 +13,11 @@ variable "github_org" {
   type        = string
 }
 
+variable "github_org_id" {
+  description = "ID numerique de l'organisation GitHub (present dans le sub du jeton OIDC) : https://api.github.com/orgs/<org>"
+  type        = string
+}
+
 variable "repository_prefix" {
   description = "Prefixe commun aux depots GitHub ET aux depots ECR (ex. formation-ba-) : tout nouveau depot qui le porte est autorise sans modifier Terraform"
   type        = string

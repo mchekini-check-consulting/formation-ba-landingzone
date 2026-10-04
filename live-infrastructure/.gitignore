@@ -1,0 +1,22 @@
+# Terragrunt
+**/.terragrunt-cache/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Fichiers generes par Terragrunt (remote_state / provider)
+backend.tf
+provider.tf
+
+# Secrets locaux
+*.tfvars.json
+.env

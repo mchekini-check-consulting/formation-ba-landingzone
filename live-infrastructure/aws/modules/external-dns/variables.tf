@@ -24,7 +24,7 @@ variable "zone_name" {
   default     = "check-consulting.net"
 }
 
-# Doivent correspondre a platform-gitops (values/common/external-dns.yaml et
+# Doivent correspondre a formation-ba-gitops/platform-gitops (values/common/external-dns.yaml et
 # tools.external-dns.namespace)
 variable "namespace" {
   description = "Namespace Kubernetes d'external-dns"

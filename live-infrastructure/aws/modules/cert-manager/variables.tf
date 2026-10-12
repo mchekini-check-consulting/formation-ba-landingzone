@@ -19,7 +19,7 @@ variable "cluster_name" {
 }
 
 variable "zone_name" {
-  description = "Zone Route53 publique du certificat wildcard *.<zone_name> (challenge DNS-01)"
+  description = "Zone Route53 publique des certificats wildcard *.<env>.<zone_name> et *.<projet>.<env>.<zone_name> (challenge DNS-01)"
   type        = string
   default     = "check-consulting.net"
 }

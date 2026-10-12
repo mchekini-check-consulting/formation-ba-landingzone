@@ -1,6 +1,6 @@
 # Role IAM de cert-manager, donne au pod via EKS Pod Identity.
 # Validation DNS-01 de Let's Encrypt pour les certificats wildcard :
-#   - *.<zone_name>                     (plateforme : argocd-dev, sonarqube-dev, ...)
+#   - *.<env>.<zone_name>               (plateforme : argocd.dev, sonarqube.dev, ...)
 #   - *.<projet>.<env>.<zone_name>      (applications : <app>.<projet>.<env>.<zone_name>)
 # cert-manager ne peut ecrire QUE des enregistrements TXT _acme-challenge.* de
 # cette zone Route53 ; tout autre nom ou type est refuse par IAM.
@@ -12,10 +12,9 @@ locals {
     Project = var.project_name
   })
 
-  # Noms des challenges ACME (forme normalisee Route53) : wildcard de la zone
-  # et wildcards des sous-domaines <projet>.<env>
+  # Noms des challenges ACME (forme normalisee Route53) : wildcards des
+  # sous-domaines <env> et <projet>.<env> (pas de wildcard a l'apex de la zone)
   challenge_names = [
-    "_acme-challenge.${var.zone_name}",
     "_acme-challenge.*.${var.zone_name}",
   ]
 }

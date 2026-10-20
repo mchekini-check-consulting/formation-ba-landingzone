@@ -186,13 +186,16 @@ data "aws_iam_policy_document" "backups" {
     resources = [aws_s3_bucket.backups.arn]
   }
 
-  # Listing limite au prefixe de l'environnement
+  # Listing limite au prefixe de l'environnement. IfExists : HeadBucket (verifie
+  # par barman avant le premier WAL d'un nouveau cluster et avant une
+  # restauration) demande s3:ListBucket sans prefixe ; avec StringLike seul, il
+  # est refuse (Forbidden) et l'archivage d'une base neuve ne demarre jamais.
   statement {
     sid       = "ListEnv"
     actions   = ["s3:ListBucket"]
     resources = [aws_s3_bucket.backups.arn]
     condition {
-      test     = "StringLike"
+      test     = "StringLikeIfExists"
       variable = "s3:prefix"
       values   = ["${var.env_name}/*"]
     }

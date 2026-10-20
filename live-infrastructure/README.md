@@ -17,7 +17,8 @@ live-infrastructure/
     ├── env.hcl                    # config commune AWS (region = "eu-west-3")
     │
     ├── modules/                   # code Terraform reutilisable
-    │   ├── eks/                   # VPC + cluster EKS + node group + addon Pod Identity (voir son README.md)
+    │   ├── eks/                   # VPC + cluster EKS + node group + addon Pod Identity + fournisseur OIDC (IRSA) (voir son README.md)
+    │   ├── pg-backups/            # bucket S3 des sauvegardes PostgreSQL (CNPG) + role IRSA commun des Clusters <nom>-db
     │   ├── external-dns/          # role IAM Route53 (*.check-consulting.net) + association Pod Identity
     │   └── ci-github/             # provider OIDC GitHub + role de push ECR commun (depots formation-ba-*)
     │
@@ -30,8 +31,10 @@ live-infrastructure/
         │   │   └── terragrunt.hcl # source = ../../modules/eks, inputs (version, instance type, ...)
         │   ├── external-dns/
         │   │   └── terragrunt.hcl # source = ../../modules/external-dns, dependency eks (cluster_name)
-        │   └── ci-github/
-        │       └── terragrunt.hcl # source = ../../modules/ci-github, prefixe formation-ba-
+        │   ├── ci-github/
+        │   │   └── terragrunt.hcl # source = ../../modules/ci-github, prefixe formation-ba-
+        │   └── pg-backups/
+        │       └── terragrunt.hcl # source = ../../modules/pg-backups, dependency eks (fournisseur OIDC)
         │
         └── prod/                  # (vide pour l'instant)
 ```

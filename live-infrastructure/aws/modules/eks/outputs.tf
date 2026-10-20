@@ -24,6 +24,16 @@ output "cluster_ca_certificate" {
   sensitive   = true
 }
 
+output "oidc_provider_arn" {
+  description = "ARN du fournisseur OIDC IAM du cluster (IRSA)"
+  value       = aws_iam_openid_connect_provider.eks.arn
+}
+
+output "oidc_issuer" {
+  description = "Emetteur OIDC du cluster, sans https:// (prefixe des conditions IRSA)"
+  value       = trimprefix(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://")
+}
+
 output "kubeconfig_command" {
   description = "Commande pour generer le kubeconfig local"
   value       = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${aws_eks_cluster.main.name}"

@@ -36,6 +36,11 @@ live-infrastructure/
         │   └── pg-backups/
         │       └── terragrunt.hcl # source = ../../modules/pg-backups, dependency eks (fournisseur OIDC)
         │
+        ├── qualif/                # meme compte, heberge sur l'EKS de dev (namespaces qualif-<projet>)
+        │   ├── account.hcl        # team_name, aws_account_id, env_name = "qualif"
+        │   └── pg-backups/
+        │       └── terragrunt.hcl # source = ../../modules/pg-backups, dependency ../../dev/eks
+        │
         └── prod/                  # (vide pour l'instant)
 ```
 

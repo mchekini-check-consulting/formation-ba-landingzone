@@ -52,21 +52,6 @@ variable "node_count" {
   default     = 4
 }
 
-# api : erreurs et avertissements de l'API server ; audit : qui a fait quoi
-# (volumineux, facture a l'ingestion CloudWatch). Autres types : authenticator,
-# controllerManager, scheduler.
-variable "cluster_log_types" {
-  description = "Types de logs du control plane EKS envoyes vers CloudWatch"
-  type        = list(string)
-  default     = []
-}
-
-variable "cluster_log_retention_days" {
-  description = "Retention du groupe CloudWatch des logs du control plane, en jours"
-  type        = number
-  default     = 14
-}
-
 variable "tags" {
   description = "Tags a appliquer aux ressources"
   type        = map(string)

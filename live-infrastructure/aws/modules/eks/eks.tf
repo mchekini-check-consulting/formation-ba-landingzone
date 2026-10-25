@@ -13,24 +13,9 @@ resource "aws_eks_cluster" "main" {
     endpoint_private_access = false
   }
 
-  # Logs du control plane vers CloudWatch (groupe cree ci-dessous, avec sa
-  # retention), lus par Grafana (formation-ba-gitops, datasource CloudWatch)
-  enabled_cluster_log_types = var.cluster_log_types
-
   tags = local.tags
 
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_cluster_policy,
-    aws_cloudwatch_log_group.control_plane,
-  ]
-}
-
-# Nom impose par EKS. Cree par Terraform avant l'activation des logs : sinon EKS
-# le cree lui-meme, sans retention (conservation illimitee, cout croissant).
-resource "aws_cloudwatch_log_group" "control_plane" {
-  name              = "/aws/eks/${local.cluster_name}/cluster"
-  retention_in_days = var.cluster_log_retention_days
-  tags              = local.tags
+  depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }
 
 # Pas d'image_id : EKS resout l'AMI AL2023 ARM standard et fusionne notre

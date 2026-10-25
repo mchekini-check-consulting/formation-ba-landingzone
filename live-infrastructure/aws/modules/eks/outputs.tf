@@ -34,16 +34,6 @@ output "oidc_issuer" {
   value       = trimprefix(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://")
 }
 
-output "control_plane_log_group_name" {
-  description = "Groupe CloudWatch des logs du control plane (datasource CloudWatch de Grafana)"
-  value       = aws_cloudwatch_log_group.control_plane.name
-}
-
-output "control_plane_log_group_arn" {
-  description = "ARN du groupe CloudWatch des logs du control plane"
-  value       = aws_cloudwatch_log_group.control_plane.arn
-}
-
 output "kubeconfig_command" {
   description = "Commande pour generer le kubeconfig local"
   value       = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${aws_eks_cluster.main.name}"

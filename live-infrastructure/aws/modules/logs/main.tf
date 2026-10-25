@@ -1,9 +1,7 @@
-# Logs du cluster : stockage de Loki et lecture des logs du control plane EKS.
+# Logs du cluster : stockage de Loki.
 #
 #   - bucket S3 de Loki (chunks + index TSDB), ecrit par logging/loki
 #   - role IAM de Loki, donne au pod par EKS Pod Identity
-#   - role IAM de Grafana (logging/grafana) : lecture seule du groupe CloudWatch
-#     des logs du control plane EKS (api, audit ; module eks, cluster_log_types)
 #
 # Retention a deux niveaux (doivent rester coherents avec formation-ba-gitops,
 # gitops/values/<env>/loki.yaml : loki.limits_config.retention_period) :
@@ -95,7 +93,7 @@ resource "aws_s3_bucket_policy" "loki" {
   depends_on = [aws_s3_bucket_public_access_block.loki]
 }
 
-# --- Roles Pod Identity ----------------------------------------------------
+# --- Role Pod Identity -----------------------------------------------------
 
 data "aws_iam_policy_document" "assume" {
   statement {
@@ -143,56 +141,5 @@ resource "aws_eks_pod_identity_association" "loki" {
   namespace       = var.namespace
   service_account = var.loki_service_account
   role_arn        = aws_iam_role.loki.arn
-  tags            = local.tags
-}
-
-resource "aws_iam_role" "grafana" {
-  name               = "role-${var.team_name}-${var.project_name}-${var.env_name}-grafana"
-  assume_role_policy = data.aws_iam_policy_document.assume.json
-  tags               = local.tags
-}
-
-# Datasource CloudWatch de Grafana : requetes Logs Insights sur le groupe du
-# control plane EKS uniquement. Les actions Describe* et de suivi de requete ne
-# se restreignent pas a un groupe (lecture seule, sans contenu de logs).
-data "aws_iam_policy_document" "grafana" {
-  statement {
-    sid = "LireLogsControlPlane"
-    actions = [
-      "logs:StartQuery",
-      "logs:FilterLogEvents",
-      "logs:GetLogEvents",
-      "logs:GetLogGroupFields",
-      "logs:DescribeLogStreams",
-    ]
-    resources = [
-      var.eks_log_group_arn,
-      "${var.eks_log_group_arn}:*",
-    ]
-  }
-
-  statement {
-    sid = "SuiviRequetes"
-    actions = [
-      "logs:DescribeLogGroups",
-      "logs:GetQueryResults",
-      "logs:StopQuery",
-      "logs:DescribeQueries",
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "grafana" {
-  name   = "cloudwatch-eks-control-plane"
-  role   = aws_iam_role.grafana.id
-  policy = data.aws_iam_policy_document.grafana.json
-}
-
-resource "aws_eks_pod_identity_association" "grafana" {
-  cluster_name    = var.cluster_name
-  namespace       = var.namespace
-  service_account = var.grafana_service_account
-  role_arn        = aws_iam_role.grafana.arn
   tags            = local.tags
 }

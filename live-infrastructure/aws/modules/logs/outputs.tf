@@ -8,8 +8,3 @@ output "loki_role_arn" {
   description = "Role IAM de Loki (Pod Identity, rien a annoter cote Kubernetes)"
   value       = aws_iam_role.loki.arn
 }
-
-output "grafana_role_arn" {
-  description = "Role IAM de Grafana pour la datasource CloudWatch (Pod Identity)"
-  value       = aws_iam_role.grafana.arn
-}

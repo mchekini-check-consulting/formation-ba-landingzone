@@ -20,4 +20,8 @@ inputs = {
   # 4 VM Graviton2 (ARM64), famille burstable
   node_instance_type = "t4g.large"
   node_count         = 4
+
+  # Logs du control plane lus par Grafana (dashboard infra)
+  cluster_log_types          = ["api", "audit"]
+  cluster_log_retention_days = 14
 }

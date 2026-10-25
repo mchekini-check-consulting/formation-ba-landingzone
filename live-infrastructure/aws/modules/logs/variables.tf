@@ -14,12 +14,7 @@ variable "env_name" {
 }
 
 variable "cluster_name" {
-  description = "Cluster EKS ou tournent Loki et Grafana (output du composant eks)"
-  type        = string
-}
-
-variable "eks_log_group_arn" {
-  description = "Groupe CloudWatch des logs du control plane EKS, lu par Grafana (output du composant eks)"
+  description = "Cluster EKS ou tourne Loki (output du composant eks)"
   type        = string
 }
 
@@ -37,10 +32,10 @@ variable "lifecycle_margin_days" {
   default     = 7
 }
 
-# Doivent correspondre a formation-ba-gitops (tools.loki.namespace, tools.grafana.namespace
-# et ServiceAccounts des values/common/loki.yaml et grafana.yaml)
+# Doivent correspondre a formation-ba-gitops (tools.loki.namespace et
+# ServiceAccount de values/common/loki.yaml)
 variable "namespace" {
-  description = "Namespace Kubernetes de Loki et Grafana"
+  description = "Namespace Kubernetes de Loki"
   type        = string
   default     = "logging"
 }
@@ -49,12 +44,6 @@ variable "loki_service_account" {
   description = "ServiceAccount Kubernetes de Loki"
   type        = string
   default     = "loki"
-}
-
-variable "grafana_service_account" {
-  description = "ServiceAccount Kubernetes de Grafana"
-  type        = string
-  default     = "grafana"
 }
 
 variable "tags" {

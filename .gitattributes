@@ -1,0 +1,4 @@
+*.tf     text eol=lf
+*.hcl    text eol=lf
+*.tftpl  text eol=lf
+*.tpl    text eol=lf

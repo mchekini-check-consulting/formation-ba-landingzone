@@ -7,7 +7,7 @@ terraform {
 }
 
 locals {
-  kubernetes_version = "1.31"
+  kubernetes_version = "1.35"
 }
 
 inputs = {

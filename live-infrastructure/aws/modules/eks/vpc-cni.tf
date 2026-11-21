@@ -5,9 +5,9 @@
 # t4g.large alors que le kubelet annonce maxPods=110 (cf. ADR 002).
 #
 # Migration prefix delegation en 3 applies successifs sur cette ressource :
-#   1. reprise de l'addon, config inchangée (cet état)
+#   1. reprise de l'addon, config inchangée
 #   2. WARM_IP_TARGET temporaire pour libérer les slots ENI
-#   3. ENABLE_PREFIX_DELEGATION=true
+#   3. ENABLE_PREFIX_DELEGATION=true (cet état)
 #
 # addon_version figée sur la version déjà déployée (même image) : la reprise
 # ne doit rien changer d'autre que la gestion par Terraform.
@@ -21,6 +21,17 @@ resource "aws_eks_addon" "vpc_cni" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
   preserve                    = true
+
+  # Étape 3 : prefix delegation -> chaque slot ENI porte un /28 (16 IP),
+  # cohérent avec maxPods=110 du launch template (cf. ADR 002).
+  # WARM_IP_TARGET / MINIMUM_IP_TARGET (étape 2) retirés : en mode prefix ils
+  # prendraient le pas sur WARM_PREFIX_TARGET.
+  configuration_values = jsonencode({
+    env = {
+      ENABLE_PREFIX_DELEGATION = "true"
+      WARM_PREFIX_TARGET       = "1"
+    }
+  })
 
   tags = local.tags
 }
